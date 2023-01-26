@@ -1,6 +1,7 @@
 package se.nackademin;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 public class ComputerTest {
+
+    @Mock
+    Helper helper = mock(Helper.class);
 
     InfiniteBoard board = new InfiniteBoard(0);
     Computer computer = new Computer(board);

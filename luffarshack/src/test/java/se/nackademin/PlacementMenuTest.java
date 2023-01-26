@@ -1,10 +1,13 @@
 package se.nackademin;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 /**
  * Unit test for the Board class
@@ -19,6 +22,9 @@ public class PlacementMenuTest {
     private PlacementMenu placementMenu;
     private Stats stats;
     private Game game;
+
+    @Mock
+    Helper helper = mock(Helper.class);
 
     @BeforeEach
     public void setUp() {
@@ -86,6 +92,9 @@ public class PlacementMenuTest {
 
     @Test
     public void handleChoiceEWinTest() {
+        placementMenu.setHelper(helper);
+        when(helper.takeInput("\n*** tester Won ***\n")).thenReturn("0");
+
         board.setMark(0, 1, "X");
         board.setMark(0, 2, "X");
         board.setMark(0, 3, "X");
