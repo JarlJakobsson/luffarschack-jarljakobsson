@@ -2,7 +2,6 @@ package se.nackademin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +14,7 @@ class GameTest {
     @Mock
     PlacementMenu placementMenu = mock(PlacementMenu.class);
     InfiniteBoard board = mock(InfiniteBoard.class);
+    Helper helper = mock(Helper.class);
 
     Stats stats = new Stats();
     Game game = new Game(stats, "test", "test2", 0);
@@ -27,6 +27,12 @@ class GameTest {
     public void takeInputMockTest() {
         when(placementMenu.takeInput(Constants.MOVE_MENU_TEXT)).thenReturn("0");
         assertEquals(placementMenu.takeInput(Constants.MOVE_MENU_TEXT), "0");
+    }
+
+    @Test
+    public void takeInputvxcMockTest() {
+        when(helper.takeInput(Constants.MOVE_MENU_TEXT)).thenReturn("0");
+        assertEquals(helper.takeInput(Constants.MOVE_MENU_TEXT), "0");
     }
 
     /**

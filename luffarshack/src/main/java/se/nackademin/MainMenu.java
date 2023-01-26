@@ -64,7 +64,7 @@ public class MainMenu implements Menu {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             Game game = (Game) ois.readObject();
             if (game == null) {
-                System.out.println("Game object is null");
+                takeInput("Game is null.");
             }
             return game;
         } catch (IOException | ClassNotFoundException e) {
@@ -82,7 +82,7 @@ public class MainMenu implements Menu {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             Stats stats = (Stats) ois.readObject();
             if (stats == null) {
-                System.out.println("Stats object is null");
+                takeInput("Stats is null");
             }
             return stats;
         } catch (IOException | ClassNotFoundException e) {
@@ -94,7 +94,6 @@ public class MainMenu implements Menu {
     public void saveStats(Stats stats, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeObject(stats);
-            System.out.println("Stats saved.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,7 +113,7 @@ public class MainMenu implements Menu {
         return true;
     }
 
-    public void handleLoadGame() {
+    public void StartLoadedGame() {
         File file = new File("test.bin");
         if (file.exists() && !file.isDirectory()) {
             Game game = loadGame("test.bin");
@@ -124,6 +123,8 @@ public class MainMenu implements Menu {
             } else if (game != null) {
                 game.twoPlayerGame();
             }
+        } else {
+            takeInput("File does not exist.");
         }
     }
 
@@ -137,17 +138,17 @@ public class MainMenu implements Menu {
         if (file.exists() && !file.isDirectory()) {
             this.stats = loadStats("stats.bin");
         } else {
-            System.out.println("File does not exist.");
         }
     }
 
-    private Game loadGameFromMenu(String fileName) {
+    private void loadReplay(String fileName) {
         File file = new File(fileName);
         if (file.exists() && !file.isDirectory()) {
             Game game = loadGame(fileName);
-            return game;
+            game.replay();
+        } else {
+            takeInput("File does not exist.");
         }
-        return null;
     }
 
     public void startComputerGame() {
@@ -174,6 +175,7 @@ public class MainMenu implements Menu {
                 int intBoardSize = Integer.parseInt(inputBoardSize);
                 if (validSizeCheck(intBoardSize)) {
                     startTwoPlayerGame(stats, player1Name, player2Name, intBoardSize);
+                    break;
                 }
             }
         }
@@ -205,20 +207,12 @@ public class MainMenu implements Menu {
 
             // If 4 loads a game
         } else if (choice.equals("4")) {
-            Game game = loadGameFromMenu("test.bin");
-            if (game.getIsComputerGame()) {
-                stats = game.getStats();
-                game.computerGame();
-            } else if (game != null) {
-                stats = game.getStats();
-                game.twoPlayerGame();
-            }
+            StartLoadedGame();
             return true;
 
             // If 5 Loads a replay
         } else if (choice.equals("5")) {
-            Game game = loadGame("replay.bin");
-            game.replay();
+            loadReplay(choice);
             return true;
 
             // If q, saves stats in stats.bin and returns false to quit the program
@@ -234,6 +228,7 @@ public class MainMenu implements Menu {
     public void runMenu() {
         loadStatsStart();
         while (true) {
+            Helper.CLEAR();
             String choice = takeInput(Constants.MAIN_MENU_TEXT);
             if (!handleChoice(choice)) {
                 break;

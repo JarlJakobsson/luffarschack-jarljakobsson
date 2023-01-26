@@ -14,6 +14,7 @@ public class Game implements Serializable {
     private boolean isPlayer1Turn = true;
     private PlacementMenu placementMenu;
     private List<Move> moves;
+    private Helper helper = new Helper();
 
     /**
      * Constructor for Two Player Game
@@ -129,7 +130,8 @@ public class Game implements Serializable {
                 if (board.checkWin(computer.getMark(), 4)) {
                     stats.setFinnishedGames(stats.getFinnishedGames() + 1);
                     placementMenu.setWinner(true);
-                    System.out.println("Computer: EZ  WIN");
+                    board.printBoard();
+                    helper.takeInput("Computer: EZ  WIN");
                 }
             }
         }
