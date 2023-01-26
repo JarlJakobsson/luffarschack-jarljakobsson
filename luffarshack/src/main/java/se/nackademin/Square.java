@@ -1,15 +1,15 @@
 package se.nackademin;
 
+import java.io.Serializable;
+
 /**
- * Square class for keeping track of bricks on its location
+ * Square class for keeping track of marks on its location
  */
-public class Square {
+public class Square implements Serializable {
     String mark = " ";
-    String cursorMark = "( )"; 
 
     public Square() {
     }
-
 
     public String getMark() {
         return mark;
@@ -19,12 +19,5 @@ public class Square {
         this.mark = mark;
     }
 
-    public String getCursorMark() {
-        return cursorMark;
-    }
-
-    public void setCursorMark(String mark) {
-        this.cursorMark = "{" + mark + "}";
-    }
 
 }
