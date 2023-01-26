@@ -1,10 +1,12 @@
 package se.nackademin;
 
+import java.io.Serializable;
+
 /**
  * Class to handle constants
  */
 
-public class Constants {
+public class Constants implements Serializable{
 
     public static final String MOVE_MENU_TEXT = "########### MOVE ###########\n"
             + "[w] - UP\n"
@@ -12,7 +14,8 @@ public class Constants {
             + "[a] - LEFT\n"
             + "[d] - RIGHT\n"
             + "[e] - To place ur marker\n"
-            + "[q] - Quit game (No save)\n"
+            + "[r] - To save game\n"
+            + "[q] - Quit game\n"
             + "###########################\n";
 
     public static final String MAIN_MENU_TEXT = "########### MAIN MENU ###########\n"
