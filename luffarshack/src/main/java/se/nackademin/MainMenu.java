@@ -203,6 +203,7 @@ public class MainMenu implements Menu {
             // If 3 prints stats
         } else if (choice.equals("3")) {
             stats.printStats();
+            takeInput("Enter any key to coninue...");
             return true;
 
             // If 4 loads a game
@@ -212,7 +213,7 @@ public class MainMenu implements Menu {
 
             // If 5 Loads a replay
         } else if (choice.equals("5")) {
-            loadReplay(choice);
+            loadReplay("replay.bin");
             return true;
 
             // If q, saves stats in stats.bin and returns false to quit the program
