@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
-public class MainMenu {
+public class MainMenu implements Menu {
 
     private Stats stats;
 
@@ -19,13 +19,14 @@ public class MainMenu {
     /**
      * Method to check if all chars in a string are digits
      * 
-     * Loops through all the digits and looks if they are larger than 0 and less than 9
+     * Loops through all the digits and looks if they are larger than 0 and less
+     * than 9
+     * 
      * @param str takes in string to compare
-     * @param len takes in len of the string to determine number of times to
-     *            itterate
      * @return true if all are digits and false if not
      */
-    public boolean intCheck(String str, int len) {
+    public boolean intCheck(String str) {
+        int len = str.length();
         for (int i = 0; i < len; i++) {
             if (str.charAt(i) < '0'
                     || str.charAt(i) > '9') {
@@ -48,11 +49,17 @@ public class MainMenu {
         } else if (choice > 4 && choice < 101) {
             return true;
         } else {
-            System.out.println("Invalid size. Has to be between 1 - 100 or 0 for infinite map.");
+            System.out.println("Invalid size.");
             return false;
         }
     }
 
+    /**
+     * Method to load game from file
+     * 
+     * @param fileName takes file name as argument
+     * @return  returns the loaded game if not null
+     */
     public Game loadGame(String fileName) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             Game game = (Game) ois.readObject();
@@ -66,6 +73,11 @@ public class MainMenu {
         }
     }
 
+    /**
+     * Method to load stats from file
+     * @param fileName takes filename as argument
+     * @return returns loaded stats if not null
+     */
     public Stats loadStats(String fileName) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName))) {
             Stats stats = (Stats) ois.readObject();
@@ -79,16 +91,17 @@ public class MainMenu {
         }
     }
 
-    private void saveStats(Stats stats, String fileName) {
+    public void saveStats(Stats stats, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeObject(stats);
-            System.out.println("Game saved.");
+            System.out.println("Stats saved.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String takeInput(String text){
+    @Override
+    public String takeInput(String text) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(text);
         String input = scanner.next();
@@ -97,7 +110,6 @@ public class MainMenu {
 
     public boolean startTwoPlayerGame(Stats stats, String player1Name, String player2Name, int boardSize) {
         Game game = new Game(stats, player1Name, player2Name, boardSize);
-        game.setGame(game);
         game.twoPlayerGame();
         return true;
     }
@@ -115,42 +127,101 @@ public class MainMenu {
         }
     }
 
-    public boolean handleChoice(String choice) {
-        if (choice.equals("1")) {
-            String player1Name = takeInput("Enter player 1 name: ");
-            String player2Name = takeInput("Enter player 1 name: ");
-            while (true) {
-                String inputBoardSize = takeInput("Enter Board Size 5-100 or 0 for infinite map");
-                int len = inputBoardSize.length();
-                if (intCheck(inputBoardSize, len)) {
-                    int intBoardSize = Integer.parseInt(inputBoardSize);
-                    if (validSizeCheck(intBoardSize)) {
-                        startTwoPlayerGame(stats, player1Name, player2Name, intBoardSize);
-                        return true;
+    /**
+     * Method to load stats when you start the program
+     * Checks if path exists and is not a directory
+     * if true sets this.stats to loaded stats
+     */
+    public void loadStatsStart() {
+        File file = new File("stats.bin");
+        if (file.exists() && !file.isDirectory()) {
+            this.stats = loadStats("stats.bin");
+        } else {
+            System.out.println("File does not exist.");
+        }
+    }
 
-                    }
+    private Game loadGameFromMenu(String fileName) {
+        File file = new File(fileName);
+        if (file.exists() && !file.isDirectory()) {
+            Game game = loadGame(fileName);
+            return game;
+        }
+        return null;
+    }
+
+    public void startComputerGame() {
+        String playerName = takeInput(Constants.CHOOSE_NAME_TEXT);
+        while (true) {
+            String inputBoardSize = takeInput(Constants.CHOOSE_BOARDSIZE_TEXT);
+            if (intCheck(inputBoardSize)) {
+                int intBoardSize = Integer.parseInt(inputBoardSize);
+                if (validSizeCheck(intBoardSize)) {
+                    Game game = new Game(stats, playerName, intBoardSize);
+                    game.computerGame();
+                    break;
                 }
             }
-        } else if (choice.equals("2")) {
-            Game game = new Game(stats, "player1", 0);
-            game.setGame(game);
-            game.computerGame();
+        }
+    }
+
+    public void startTwoPlayerGame() {
+        String player1Name = takeInput(Constants.CHOOSE_PLAYER1_NAME);
+        String player2Name = takeInput(Constants.CHOOSE_PLAYER2_NAME);
+        while (true) {
+            String inputBoardSize = takeInput(Constants.CHOOSE_BOARDSIZE_TEXT);
+            if (intCheck(inputBoardSize)) {
+                int intBoardSize = Integer.parseInt(inputBoardSize);
+                if (validSizeCheck(intBoardSize)) {
+                    startTwoPlayerGame(stats, player1Name, player2Name, intBoardSize);
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to handle user mainmenu navigation
+     * If 1 takes in pl
+     * 
+     * @param choice
+     * @return
+     */
+    public boolean handleChoice(String choice) {
+
+        // If 1 start computer game
+        if (choice.equals("1")) {
+            startTwoPlayerGame();
             return true;
+
+            // If 2 Starts a game vs the Computer
+        } else if (choice.equals("2")) {
+            startComputerGame();
+            return true;
+
+            // If 3 prints stats
         } else if (choice.equals("3")) {
             stats.printStats();
             return true;
+
+            // If 4 loads a game
         } else if (choice.equals("4")) {
-            File file = new File("test.bin");
-            if (file.exists() && !file.isDirectory()) {
-                Game game = loadGame("test.bin");
+            Game game = loadGameFromMenu("test.bin");
+            if (game.getIsComputerGame()) {
                 stats = game.getStats();
-                if (game.getIsComputerGame()) {
-                    game.computerGame();
-                } else if (game != null) {
-                    game.twoPlayerGame();
-                }
+                game.computerGame();
+            } else if (game != null) {
+                stats = game.getStats();
+                game.twoPlayerGame();
             }
             return true;
+
+            // If 5 Loads a replay
+        } else if (choice.equals("5")) {
+            Game game = loadGame("replay.bin");
+            game.replay();
+            return true;
+
+            // If q, saves stats in stats.bin and returns false to quit the program
         } else if (choice.equals("q")) {
             saveStats(stats, "stats.bin");
             return false;
@@ -161,18 +232,10 @@ public class MainMenu {
     }
 
     public void runMenu() {
-        Scanner scanner = new Scanner(System.in);
-        File file = new File("stats.bin");
-        if (file.exists() && !file.isDirectory()) {
-            this.stats = loadStats("stats.bin");
-        } else {
-            System.out.println("File does not exist.");
-        }
+        loadStatsStart();
         while (true) {
-            System.out.println(Constants.MAIN_MENU_TEXT);
-            String choice = scanner.next();
+            String choice = takeInput(Constants.MAIN_MENU_TEXT);
             if (!handleChoice(choice)) {
-                scanner.close();
                 break;
             }
         }
