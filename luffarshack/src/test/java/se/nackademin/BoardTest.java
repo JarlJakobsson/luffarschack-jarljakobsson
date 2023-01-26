@@ -1,14 +1,15 @@
 package se.nackademin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-// import java.io.ByteArrayOutputStream;
-// import java.io.PrintStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the Board class
@@ -18,112 +19,157 @@ import org.junit.Test;
  * Check available square
  */
 public class BoardTest {
-    private Board board;
     private Player player;
+    private InfiniteBoard infiniteBoard;
+    private InfiniteBoard setBoard;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        board = new Board();
-        player = new Player();
+        player = new Player("tester", "X");
+        infiniteBoard = new InfiniteBoard(0);
+        setBoard = new InfiniteBoard(10);
     }
 
     /**
-     * Test if choice of board size matches the lenght of the 2D array created
+     * Test if choice of board size matches the lenght of created board
      */
     @Test
     public void BoardSizeTest() {
-        int size = 10;
-        assertEquals(board.getBoard().size(), size);
-    }
-
-    /** Test to make sure player with Mark X can mark a square */
-    @Test
-    public void PlaceMarkerTest() {
-        board.getCurrentSquare().setMark(player.getMark());
-        assertEquals(board.getCurrentSquare().getMark(), "(X)");
+        assertEquals(infiniteBoard.getSize(), 5);
+        assertEquals(setBoard.getSize(), 10);
     }
 
     /**
-     * Test to make sure, checkVailidPlacement returns true on available squares
+     * Test to make sure player with Mark X can mark a square
+     * Should return true when successfull and square mark should be changed
      */
     @Test
-    public void SquareAvailable() {
-        assertTrue("Test Failed", board.checkValidPlacement());
+    public void PlaceMarkerTestSuccses() {
+        assertTrue(infiniteBoard.placeMark(player.getMark()));
+        assertEquals(infiniteBoard.getMark(0, 0), "X");
     }
 
     /**
-     * Test to make sure, checkVailidPlacement returns false on unavailable squares
+     * Test to make sure placeMarker returns false if unsuccessfull
+     * and square mark is not changed
      */
     @Test
-    public void SquareAlreadyMarked() {
-        board.getCurrentSquare().setMark("0");
-        assertFalse("Test Failed", board.checkValidPlacement());
+    public void PlaceMarkerTestFail() {
+        infiniteBoard.placeMark("0");
 
-        board.getCurrentSquare().setMark("X");
-        assertFalse("Test Failed", board.checkValidPlacement());
+        assertFalse(infiniteBoard.placeMark(player.getMark()));
+        assertNotEquals(infiniteBoard.getMark(0, 0), "X");
     }
+
 
     @Test
     public void CheckForWinRowWinTest() {
-        board.getBoard().get(0).get(0).setMark("X");
-        board.getBoard().get(0).get(1).setMark("X");
-        board.getBoard().get(0).get(2).setMark("X");
-        board.getBoard().get(0).get(3).setMark("X");
+        infiniteBoard.setMark(0, 0, "X");
+        infiniteBoard.setMark(0, 1, "X");
+        infiniteBoard.setMark(0, 2, "X");
+        infiniteBoard.setMark(0, 3, "X");
 
-        assertTrue(board.checkForWin("X"));
+        assertTrue(infiniteBoard.checkWin(player.getMark()));
     }
 
     @Test
     public void CheckForWinColumnWinTest() {
-        board.getBoard().get(0).get(0).setMark("X");
-        board.getBoard().get(1).get(0).setMark("X");
-        board.getBoard().get(2).get(0).setMark("X");
-        board.getBoard().get(3).get(0).setMark("X");
+        infiniteBoard.setMark(0, 0, "X");
+        infiniteBoard.setMark(1, 0, "X");
+        infiniteBoard.setMark(2, 0, "X");
+        infiniteBoard.setMark(3, 0, "X");
 
-        assertTrue(board.checkForWin("X"));
+        assertTrue(infiniteBoard.checkWin(player.getMark()));
     }
 
     @Test
     public void CheckForWinRightDiagonalWinTest() {
-        board.getBoard().get(0).get(0).setMark("X");
-        board.getBoard().get(1).get(1).setMark("X");
-        board.getBoard().get(2).get(2).setMark("X");
-        board.getBoard().get(3).get(3).setMark("X");
+        infiniteBoard.setMark(0, 0, "X");
+        infiniteBoard.setMark(1, 1, "X");
+        infiniteBoard.setMark(2, 2, "X");
+        infiniteBoard.setMark(3, 3, "X");
 
-        assertTrue(board.checkForWin("X"));
+        assertTrue(infiniteBoard.checkWin(player.getMark()));
     }
 
     @Test
     public void CheckForWinLeftDiagonalWinTest() {
-        board.getBoard().get(0).get(3).setMark("X");
-        board.getBoard().get(1).get(2).setMark("X");
-        board.getBoard().get(2).get(1).setMark("X");
-        board.getBoard().get(3).get(0).setMark("X");
+        infiniteBoard.setMark(0, 3, "X");
+        infiniteBoard.setMark(1, 2, "X");
+        infiniteBoard.setMark(2, 1, "X");
+        infiniteBoard.setMark(3, 0, "X");
 
-        assertTrue(board.checkForWin("X"));
+        assertTrue(infiniteBoard.checkWin(player.getMark()));
     }
 
     @Test
-    public void testCheckForWin_noWin() {
-        board.getBoard().get(0).get(0).setMark("X");
-        board.getBoard().get(1).get(1).setMark("X");
-        board.getBoard().get(2).get(2).setMark("X");
-        board.getBoard().get(3).get(3).setMark("O");
+    public void CheckForWinNoWinTest() {
+        infiniteBoard.setMark(0, 0, "X");
+        infiniteBoard.setMark(1, 1, "X");
+        infiniteBoard.setMark(2, 2, "X");
+        infiniteBoard.setMark(3, 3, "0");
 
-        assertFalse(board.checkForWin("X"));
+        assertFalse(infiniteBoard.checkWin(player.getMark()));
+    }
+
+    /**
+     * Test to make sure moveUp returns true if first move on an infinite board
+     * and returns false if first move on a set board
+     */
+    @Test
+    public void moveUpTest() {
+        assertTrue(infiniteBoard.moveUp());
+        assertFalse(setBoard.moveUp());
+    }
+
+    @Test
+    public void moveLeftTest() {
+        assertTrue(infiniteBoard.moveLeft());
+        assertFalse(setBoard.moveLeft());
+    }
+
+    /**
+     * Test to make sure moveDown returns true if used on bottom row on infinite board
+     * and returns false if on set board
+     */
+
+    @Test
+    public void moveDownTest() {
+        infiniteBoard.setCursorY(4);
+        assertTrue(infiniteBoard.moveDown());
+        setBoard.setCursorY(9);
+        assertFalse(setBoard.moveDown());
+    }
+
+    /**
+     * Test to make sure moveRight returns true if used on right most column
+     *  on infinite board
+     * and returns false if on set board
+     */
+    @Test
+    public void moveRightTest() {
+        infiniteBoard.setCursorX(4);
+        assertTrue(infiniteBoard.moveRight());
+        setBoard.setCursorX(9);
+        assertFalse(setBoard.moveRight());
     }
     
-    // @Test
-    // public void testPrintBoard() {
-    //     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    //     System.setOut(new PrintStream(outputStream));
-    //     board.printBoard(" ");
-    //     //String expectedOutput = "\n{ } ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) \n ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ";
-    //     String expectedOutput = "{ } ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( )\n";
 
-    //     assertEquals(expectedOutput, outputStream.toString());
-    //     System.setOut(System.out);
-    //     }
+    @Test
+    public void testPrintBoard_emptySquares() {
+        // Capture the output of the printBoard method
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        infiniteBoard.printBoard();
+        String expectedOutput = "[ ] ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator();
 
+        assertEquals(expectedOutput, outContent.toString());
+
+    }
 
 }
+
