@@ -37,4 +37,5 @@ public class Constants {
                         + "##################################";
 
         public static final int NUMBER_FOR_WIN = 4;
+
 }

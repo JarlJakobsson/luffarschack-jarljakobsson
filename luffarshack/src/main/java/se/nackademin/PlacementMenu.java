@@ -10,6 +10,7 @@ public class PlacementMenu implements Serializable, Menu {
     private InfiniteBoard board;
     private boolean quit = false;
     private boolean winner = false;
+    Helper helper = new Helper();
 
     public PlacementMenu(InfiniteBoard board) {
         this.board = board;
@@ -31,6 +32,10 @@ public class PlacementMenu implements Serializable, Menu {
         return quit;
     }
 
+    public void setHelper(Helper helper) {
+        this.helper = helper;
+    }
+
     public void saveGame(Game game, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeObject(game);
@@ -46,6 +51,7 @@ public class PlacementMenu implements Serializable, Menu {
      * @param stats takes in stats as parameter to update total moves after a move
      * @param player takes inplayer to place the players mark and call the players name if winner
      * @param board takes in the bard to place mark on
+     * @param game takes in game to be able to save it
      * @return true unsuccessfull mark, false if successfull or winner
      */
 
@@ -59,7 +65,9 @@ public class PlacementMenu implements Serializable, Menu {
                 }
                 setWinner(true);
                 stats.setFinnishedGames(stats.getFinnishedGames() + 1);
-                System.out.println("\n*** " + player.getName() + " Won ***\n");
+                Helper.CLEAR();
+                board.printBoard();
+                helper.takeInput(("\n*** " + player.getName() + " Won ***\n"));
                 return false;
             }
             return false;
@@ -122,6 +130,7 @@ public class PlacementMenu implements Serializable, Menu {
      */
     public boolean runMenu(Player player, Stats stats, Game game) {
             while (true) {
+                Helper.CLEAR();
                 board.printBoard();
                 System.out.println();
                 System.out.println("Player " + player.getMark() + " turn");
