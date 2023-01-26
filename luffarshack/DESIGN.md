@@ -18,3 +18,10 @@
 - Move marker
 - Save / Load game
 - Load Replay
+  
+
+  ## ClassDiagram
+![Classdiagram](ClassDiagram.png)
+
+## Flowchart
+![Flowchart](Flowchart.png)
