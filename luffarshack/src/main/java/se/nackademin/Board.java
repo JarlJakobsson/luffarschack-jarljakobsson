@@ -3,6 +3,9 @@ package se.nackademin;
 /**
  * Interface for boards
  * 
+ * (Plan was for Static board and infiniteboard to be two diffrent classes
+ * After refactoring, infinite board could handle static boards job
+ * making static board unnessesary)
  */
 public interface Board {
 
@@ -40,12 +43,13 @@ public interface Board {
      * @param playerMark takes in a players mark to check compare for win
      * @return true if win, false if not 
      */
-    public boolean checkWin(String playerMark);
+    public boolean checkWin(String playerMark, int numberForWin);
 
     /**
      * Method place the player mark on a square
      * Method should handle if square is already marked
      * @param playerMark to add the mark to the square
+     * @param numberForWin added as parameter to improve computer AI
      * @return true if player could mark the square, false if it was already marked
      */
     public boolean placeMark(String playerMark);
