@@ -26,6 +26,7 @@ public class PlacementMenuTest {
         board = new InfiniteBoard(0);
         stats = new Stats();
         placementMenu = new PlacementMenu(board);
+        game = new Game(stats, "test", "test2", 0);
     }
 
     public InfiniteBoard getBoard() {
@@ -82,5 +83,20 @@ public class PlacementMenuTest {
         board.setMark(0, 0, "X");
         assertTrue(placementMenu.handleChoice("e", player, stats, game));
     }
+
+    @Test
+    public void handleChoiceEWinTest() {
+        board.setMark(0, 1, "X");
+        board.setMark(0, 2, "X");
+        board.setMark(0, 3, "X");
+
+        assertFalse(placementMenu.handleChoice("e", player, stats, game));
+    }
+
+    @Test
+    public void handleChoiceQTest() {
+        assertFalse(placementMenu.handleChoice("q", player, stats, game));
+    }
+
 
 }
