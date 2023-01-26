@@ -1,8 +1,9 @@
 package se.nackademin;
 
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Helper {
+public class Helper implements Serializable {
 
     public Helper() {
 
