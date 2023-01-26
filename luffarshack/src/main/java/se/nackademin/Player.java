@@ -1,11 +1,14 @@
 package se.nackademin;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable{
     private String name;
-    private String mark = "X";
+    private String mark;
 
-    public Player() {
-
+    public Player(String name, String mark) {
+        this.name = name;
+        this.mark = mark;
     }
 
     public String getName() {
@@ -14,10 +17,6 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void placeMarker() {
-        
     }
 
     public String getMark() {
