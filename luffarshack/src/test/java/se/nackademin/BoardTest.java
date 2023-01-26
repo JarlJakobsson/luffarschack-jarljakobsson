@@ -35,7 +35,7 @@ public class BoardTest {
      */
     @Test
     public void BoardSizeTest() {
-        assertEquals(infiniteBoard.getSize(), 5);
+        assertEquals(infiniteBoard.getSize(), 10);
         assertEquals(setBoard.getSize(), 10);
     }
 
@@ -69,7 +69,7 @@ public class BoardTest {
         infiniteBoard.setMark(0, 2, "X");
         infiniteBoard.setMark(0, 3, "X");
 
-        assertTrue(infiniteBoard.checkWin(player.getMark()));
+        assertTrue(infiniteBoard.checkWin(player.getMark(), 4));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BoardTest {
         infiniteBoard.setMark(2, 0, "X");
         infiniteBoard.setMark(3, 0, "X");
 
-        assertTrue(infiniteBoard.checkWin(player.getMark()));
+        assertTrue(infiniteBoard.checkWin(player.getMark(), 4));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class BoardTest {
         infiniteBoard.setMark(2, 2, "X");
         infiniteBoard.setMark(3, 3, "X");
 
-        assertTrue(infiniteBoard.checkWin(player.getMark()));
+        assertTrue(infiniteBoard.checkWin(player.getMark(), 4));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class BoardTest {
         infiniteBoard.setMark(2, 1, "X");
         infiniteBoard.setMark(3, 0, "X");
 
-        assertTrue(infiniteBoard.checkWin(player.getMark()));
+        assertTrue(infiniteBoard.checkWin(player.getMark(), 4));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class BoardTest {
         infiniteBoard.setMark(2, 2, "X");
         infiniteBoard.setMark(3, 3, "0");
 
-        assertFalse(infiniteBoard.checkWin(player.getMark()));
+        assertFalse(infiniteBoard.checkWin(player.getMark(), 4));
     }
 
     /**
@@ -135,7 +135,7 @@ public class BoardTest {
 
     @Test
     public void moveDownTest() {
-        infiniteBoard.setCursorY(4);
+        infiniteBoard.setCursorY(9);
         assertTrue(infiniteBoard.moveDown());
         setBoard.setCursorY(9);
         assertFalse(setBoard.moveDown());
@@ -148,24 +148,31 @@ public class BoardTest {
      */
     @Test
     public void moveRightTest() {
-        infiniteBoard.setCursorX(4);
+        infiniteBoard.setCursorX(9);
         assertTrue(infiniteBoard.moveRight());
         setBoard.setCursorX(9);
         assertFalse(setBoard.moveRight());
     }
     
 
+    /**
+     * Test to make sure board test prints properly
+     */
     @Test
-    public void testPrintBoard_emptySquares() {
-        // Capture the output of the printBoard method
+    public void PrintBoardTest() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         infiniteBoard.printBoard();
-        String expectedOutput = "[ ] ( ) ( ) ( ) ( ) " + System.lineSeparator()
-                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
-                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
-                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
-                + "( ) ( ) ( ) ( ) ( ) " + System.lineSeparator();
+        String expectedOutput = "\033[32m[ ]\033[0m ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator()
+                + "( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) ( ) " + System.lineSeparator();
 
         assertEquals(expectedOutput, outContent.toString());
 
