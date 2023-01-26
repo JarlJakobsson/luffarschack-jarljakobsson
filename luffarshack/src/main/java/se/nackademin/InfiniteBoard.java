@@ -14,12 +14,14 @@ public class InfiniteBoard implements Board, Serializable {
 
     /**
      * Consutructor for InfiniteBoard
+     * 
      * @param boardSize to decide what boardsize to use.
-     * 0 for infinite
+     *                  0 for infinite
      */
     public InfiniteBoard(int boardSize) {
-        if(boardSize == 0) {
-            size = 5;
+        if (boardSize == 0) {
+            size = 10;
+            printSize = 10;
             isInfinite = true;
         } else {
             size = boardSize;
@@ -68,7 +70,7 @@ public class InfiniteBoard implements Board, Serializable {
         return board[cursorY][cursorX].getMark();
     }
 
-    public void setMark(int cursorY, int cursorX, String mark){
+    public void setMark(int cursorY, int cursorX, String mark) {
         board[cursorY][cursorX].setMark(mark);
     }
 
@@ -120,20 +122,38 @@ public class InfiniteBoard implements Board, Serializable {
     /**
      * Method to print the board.
      * Added offset Y and X and printSize only print the correct 5x5 squares
+     * 
+     * Prints out with Ansi colours, 32m = green, 31 = red, 34 = blue
      */
     @Override
     public void printBoard() {
         for (int i = offsetY; i < printSize + offsetY; i++) {
             for (int j = offsetX; j < printSize + offsetX; j++) {
                 if (cursorX == j && cursorY == i) {
-                    System.out.print("[" + board[i][j].getMark() + "]" + " ");
+                    System.out.print("\033[32m[" + board[i][j].getMark() + "]\033[0m" + " ");
                 } else {
-                    System.out.print("(" + board[i][j].getMark() + ")" + " ");
+                    if (board[i][j].getMark().equals("X")) {
+                        System.out.print("\033[31m(" + board[i][j].getMark() + ")\033[0m" + " ");
+                    }
+                    else if (board[i][j].getMark().equals("0")) {
+                        System.out.print("\033[34m(" + board[i][j].getMark() + ")\033[0m" + " ");
+                    }
+                    else {
+                        System.out.print("(" + board[i][j].getMark() + ")" + " ");
+                    }
                 }
             }
             System.out.println();
         }
     }
+
+    public void clearBoard() {
+        for(int i = offsetY;i<printSize+offsetY;i++){
+                for (int j = offsetX; j < printSize + offsetX; j++) {
+                        board[i][j].setMark(" ");
+                    }
+                }
+            }
 
     /**
      * Method for moving the cursor up
@@ -151,10 +171,10 @@ public class InfiniteBoard implements Board, Serializable {
     public boolean moveUp() {
         if (cursorY > 0) {
             cursorY--;
-            if (printSize + offsetY - cursorY == 6) {
+            if (offsetY - cursorY == 1) {
                 offsetY--;
             }
-        } else if (isInfinite) {
+        } else if (isInfinite && cursorY == 0) {
             expandBoard();
             offsetX++;
             cursorX++;
@@ -169,13 +189,13 @@ public class InfiniteBoard implements Board, Serializable {
     public boolean moveDown() {
         if (cursorY < size - 1) {
             cursorY++;
-            if (cursorY - offsetY > 4) {
+            if (cursorY - offsetY == printSize) {
                 offsetY++;
-                if (printSize + offsetX - cursorX == 6) {
+                if (cursorY < offsetY) {
                     offsetX--;
                 }
             }
-        } else if (isInfinite){
+        } else if (isInfinite && cursorY == size - 1) {
             expandBoard();
             offsetY += 2;
             offsetX++;
@@ -192,10 +212,10 @@ public class InfiniteBoard implements Board, Serializable {
     public boolean moveLeft() {
         if (cursorX > 0) {
             cursorX--;
-            if (printSize + offsetX - cursorX == 6) {
+            if (cursorX < offsetX) {
                 offsetX--;
             }
-        } else if(isInfinite) {
+        } else if (isInfinite && cursorX == 0) {
             expandBoard();
             offsetY++;
             cursorY++;
@@ -210,10 +230,10 @@ public class InfiniteBoard implements Board, Serializable {
     public boolean moveRight() {
         if (cursorX < size - 1) {
             cursorX++;
-            if (printSize + cursorX - offsetX > 9) {
+            if (cursorX - offsetX == printSize) {
                 offsetX++;
             }
-        } else if (isInfinite) {
+        } else if (isInfinite && cursorX == size - 1) {
             expandBoard();
             offsetX += 2;
             offsetY++;
@@ -227,8 +247,11 @@ public class InfiniteBoard implements Board, Serializable {
     }
 
     /**
-     * Method for placeing the players mark or the square where the cursor is pointing
-     * @param playerMark takes in players mark so it places correct mark on the square
+     * Method for placeing the players mark or the square where the cursor is
+     * pointing
+     * 
+     * @param playerMark takes in players mark so it places correct mark on the
+     *                   square
      * 
      * @return true if succsefull mark, false if already marked
      */
@@ -244,15 +267,18 @@ public class InfiniteBoard implements Board, Serializable {
     }
 
     @Override
-    public boolean checkWin(String playerMark) {
+    public boolean checkWin(String playerMark, int numberForWin) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 Square currentSquare = board[i][j];
                 if (currentSquare.getMark().equals(playerMark)) {
-                    if (checkRow(i, j, 
-                            playerMark) || checkColumn(i, j, 
-                                    playerMark)
-                            || checkDiagonals(i, j, playerMark)) {
+                    if (checkRow(i, j,
+                            playerMark,
+                            numberForWin)
+                            || checkColumn(i, j,
+                                    playerMark,
+                                    numberForWin)
+                            || checkDiagonals(i, j, playerMark, numberForWin)) {
                         return true;
                     }
                 }
@@ -261,8 +287,8 @@ public class InfiniteBoard implements Board, Serializable {
         return false;
     }
 
-    private boolean checkRow(int row, int col, String playerMark) {
-        for (int i = 0; i < 4; i++) {
+    private boolean checkRow(int row, int col, String playerMark, int numberForWin) {
+        for (int i = 0; i < numberForWin; i++) {
             if (col + i >= size || !board[row][col + i].getMark().equals(playerMark)) {
                 return false;
             }
@@ -270,8 +296,8 @@ public class InfiniteBoard implements Board, Serializable {
         return true;
     }
 
-    private boolean checkColumn(int row, int col, String playerMark) {
-        for (int i = 0; i < 4; i++) {
+    private boolean checkColumn(int row, int col, String playerMark, int numberForWin) {
+        for (int i = 0; i < numberForWin; i++) {
             if (row + i >= size || !board[row + i][col].getMark().equals(playerMark)) {
                 return false;
             }
@@ -279,12 +305,13 @@ public class InfiniteBoard implements Board, Serializable {
         return true;
     }
 
-    private boolean checkDiagonals(int row, int col, String playerMark) {
-        return checkRightDiagonal(row, col, playerMark) || checkLeftDiagonal(row, col, playerMark);
+    private boolean checkDiagonals(int row, int col, String playerMark, int numberForWin) {
+        return checkRightDiagonal(row, col, playerMark, numberForWin) || checkLeftDiagonal(row, col, playerMark,
+                numberForWin);
     }
 
-    private boolean checkRightDiagonal(int row, int col, String playerMark) {
-        for (int i = 0; i < 4; i++) {
+    private boolean checkRightDiagonal(int row, int col, String playerMark, int numberForWin) {
+        for (int i = 0; i < numberForWin; i++) {
             if (row + i >= size || col + i >= size || !board[row + i][col + i].getMark().equals(playerMark)) {
                 return false;
             }
@@ -292,8 +319,8 @@ public class InfiniteBoard implements Board, Serializable {
         return true;
     }
 
-    private boolean checkLeftDiagonal(int row, int col, String playerMark) {
-        for (int i = 0; i < 4; i++) {
+    private boolean checkLeftDiagonal(int row, int col, String playerMark, int numberForWin) {
+        for (int i = 0; i < numberForWin; i++) {
             if (row + i >= size || col - i < 0 || !board[row + i][col - i].getMark().equals(playerMark)) {
                 return false;
             }
