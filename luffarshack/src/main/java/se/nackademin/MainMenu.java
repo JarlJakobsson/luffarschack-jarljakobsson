@@ -114,9 +114,9 @@ public class MainMenu implements Menu {
     }
 
     public void StartLoadedGame() {
-        File file = new File("test.bin");
+        File file = new File("savedgame.bin");
         if (file.exists() && !file.isDirectory()) {
-            Game game = loadGame("test.bin");
+            Game game = loadGame("savedgame.bin");
             game.setStats(stats);
             if (game.getIsComputerGame()) {
                 game.computerGame();

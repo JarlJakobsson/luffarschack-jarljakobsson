@@ -104,7 +104,7 @@ public class PlacementMenu implements Serializable, Menu {
             setQuit(true);
             return false;
         } else if (choice.equals("r")) {
-            saveGame(game, "test.bin");
+            saveGame(game, "savedgame.bin");
             return true;
         } else if (choice.equals("e")) {
             if (!placeMark(stats, player, board, game)) {
